@@ -1,7 +1,9 @@
 <template>
-  <div class="landing has-background-primary is-full has-text-centered">
-    <Logo />
-    <a class="icon-scroll" href="#filters"></a>
+  <div>
+    <div class="landing has-background-primary is-full has-text-centered">  
+      <Logo />
+    </div>
+    <a class="icon-scroll"></a>
   </div>
 </template>
 <script>

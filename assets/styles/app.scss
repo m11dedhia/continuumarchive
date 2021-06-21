@@ -121,7 +121,7 @@ main{
 header{
   box-shadow: 5px 5px 20px $gray;
   position: relative;
-  z-index: 1;
+  z-index: 0;
 }
 
 .pagination{
@@ -236,4 +236,25 @@ header{
       display: none;
     }
   }
+}
+
+.highlighted {
+    background: $link;
+}
+
+.modal .modal-content{
+  img{
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.concert-poster{
+  cursor: pointer;
+}
+
+#postnum{
+  z-index: 9;
+  left: calc(50% - 1rem);
+  bottom: 1rem;
 }

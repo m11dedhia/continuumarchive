@@ -54,6 +54,8 @@ export default {
   build: {
   },
 
+
+
   generate: {
     routes: dynamicRoutes
   },

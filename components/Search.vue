@@ -1,14 +1,14 @@
 <template>
 <div class="p-3">
-    <section id="filters" class="mb-4">
+    <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
         <div class="column is-5">
-          <b-input type="search" class="search column is-full" placeholder="search" size="is-small" v-model="search"></b-input>
+          <b-input type="search" class="search column is-full" placeholder="search" v-model="search"></b-input>
         </div>
 
         <div class="column is-2">
           <b-field class="is-full">
-              <b-select placeholder="FILTERED BY" size="is-small" v-model="filteredBy">
+              <b-select placeholder="FILTERED BY" v-model="filteredBy">
                 <option value="composition">By Composition</option>
                 <option value="composer">By Composer</option>
                 <option value="performer">By Performer</option>
@@ -88,28 +88,30 @@
 
     <div class="tableitem columns is-vcentered" v-for="(post, index) in filteredPosts" :key="post.id">
       <div class="column is-1">
-        <p>{{ post.concert_season }}</p>
-
+        <p v-html="highlight(post.concert_season) || post.concert_season"></p>
       </div>
       <div class="column is-3">
-        <p><nuxt-link :to="`/concerts/` + post.id" target="_blank">{{ post.concert_title }}</nuxt-link>
+        <p><nuxt-link :to="`/concerts/` + post.id" target="_blank" v-html="highlight(post.concert_title) || post.concert_title"></nuxt-link>
           <span v-if="post.concert_poster"><i class="has-text-grey fas fa-image"></i></span>
           <span v-if="post.concert_images"><i class="has-text-grey fas fa-images"></i></span></p>
       </div>
       <div class="column is-8">
         <div class="columns is-vcentered" v-for="composition in post.compositions">
           <div class="column is-3">
-             {{ composition.composition_title }} <span v-if="composition.composition_year">({{ composition.composition_year }})</span>
+              <span v-html="highlight(composition.composition_title) || composition.composition_title"></span>
+              <span v-if="composition.composition_year">({{ composition.composition_year }})</span>
               <span v-if="composition.world_premiere"><i class="has-text-grey fas fa-globe"></i></span>
               <span v-if="composition.canadian_premiere"><i class="has-text-grey fab fa-canadian-maple-leaf"></i></span>
               <span v-if="composition.composition_video_link"><i class="has-text-grey fas fa-video"></i></span>
           </div>
           <div class="column is-3">
-            <span class="">{{ composition.composer_name }}</span>
+            <span v-html="highlight(composition.composer_name) || composition.composer_name"></span>
             <span class="has-text-grey" v-if="composition.composer_nationality">({{ composition.composer_nationality }})</span>
           </div>
           <div class="column is-6">
-            <span v-for="person in composition.core_ensemble"> {{ person }}, </span>
+            <span v-for="person in composition.core_ensemble">
+              <span class="arrayitem" v-html="highlight(person) || person"></span>
+              <span class="separator">,&nbsp;</span></span>
             <span v-if="composition.guest_performers">{{ composition.guest_performers }}</span>
           </div>
         </div>
@@ -122,6 +124,15 @@
 	  :per-page="perPage"
    >
    </b-pagination>
+
+   <div id="postnum" class="fixed">
+      <small v-if="filteredPosts.length == total">
+				Found {{ total }} items
+			</small>
+      <small v-else>
+				Found {{ filteredPosts.length }} items
+			</small>
+   </div>
 
   </div>
 </template>
@@ -177,18 +188,31 @@ export default {
               compositions: post.acf.archive_compositions
             }
           })
-          this.posts = _(this.posts).sortBy("concert_season", "asc").value();
+          // this.posts = _(this.posts).sortBy("concert_season", "dec").value();
         }) // then
         .catch(error => {
           console.log(error);
         })
    },
-   sort (s) {
-      if(s === this.currentSort) {
-        this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
-      }
-      this.currentSort = s;
-    }
+   highlight( data ) {
+			if ( this.search ) {
+				const pattern = new RegExp( this.search, 'i' );
+				const highlightedData = data.replace(
+					pattern,
+					`<span class="highlighted">${this.search}</span>`
+				);
+				return highlightedData;
+			}
+	 },
+   stringify( arr ) {
+     return arr.join(', ')
+   },
+   // sort (s) {
+   //    if(s === this.currentSort) {
+   //      this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+   //    }
+   //    this.currentSort = s;
+   //  }
   },
   computed: {
      filteredPosts: function(){
@@ -211,6 +235,8 @@ export default {
           //
           //   return str;
           // }
+
+          let totalPosts = this.posts
 
           let posts = this.posts
 
@@ -265,14 +291,9 @@ export default {
           // }
 
           if (this.filteredBy === 'composition') {
-            return posts
-            lify
             if (this.search != '' && this.search) {
 
-                // if (post.compositions.some(c => c.composition_title.toLowerCase().include(this.search.toLowerCase))){
-                //
-                //   composition.show = ture
-                // }
+
                 let compositionTitle = post.compositions.findIndex((c) => {
                   return c.composition_title.toLowerCase().includes(this.search.toLowerCase())
                 })
@@ -325,11 +346,11 @@ export default {
 
          // posts.sort((a,b) => (a.concert_title > b.concert_title) ? 1 : -1)
 
+
         // return paginated posts
         this.total = posts.length
         let page_number = this.current - 1
         return posts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
-
 
      }, // filteredPosts
 

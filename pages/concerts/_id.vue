@@ -26,7 +26,7 @@
                 <span class="icon">
                   <i class="has-text-grey fas fa-comments-dollar"></i>
                 </span>
-                <span v-for="funder in post.acf.concert_funders" class="arrayitem">{{ funder }}<span class="separator">, &nbsp;</span></span>
+                <span v-for="funder in post.acf.concert_funders" class="arrayitem">{{ funder }}<span class="separator">,&nbsp;</span></span>
                 <span v-if="post.acf.concert_other_funders">{{ post.acf.concert_other_funders }}</span>
               </span>
             </p>
@@ -95,15 +95,14 @@
             </ul>
           </div>
           <div class="column is-4" v-if="post.acf.concert_poster">
-
-              <img class="fullwidth" :src="post.acf.concert_poster" :alt="post.acf.concert_title" @click="isComponentModalActive = true">
+              <img class="fullwidth concert-poster" :src="post.acf.concert_poster" :alt="post.acf.concert_title" @click="isComponentModalActive = true">
               <b-modal v-model="isComponentModalActive">
                   <img class="fullwidth" :src="post.acf.concert_poster" :alt="post.acf.concert_title">
               </b-modal>
 
           </div>
         </section>
-        <section class="concert-info my-4 py-4" v-if="post.acf.concert_info">
+        <section class="concert-desc my-4 py-4" v-if="post.acf.concert_info">
           <div class="container" v-html="post.acf.concert_info"></div>
         </section>
         <section class="concert-images my-4" v-if="post.acf.concert_images">
