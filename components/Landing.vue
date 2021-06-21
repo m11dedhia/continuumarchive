@@ -1,9 +1,12 @@
 <template>
   <div>
-    <div class="landing has-background-primary is-full has-text-centered">  
-      <Logo />
+    <div class="landing is-full has-text-centered has-background-primary mb-3">
+       <a class="icon-scroll" href="#filters"></a>
+       <span class="icon-scroll-text">See All Concerts</span>
+       <Logo />
     </div>
-    <a class="icon-scroll"></a>
+
+
   </div>
 </template>
 <script>
@@ -12,9 +15,6 @@
    components: {
      Logo,
    },
-   mounted(){
-     this.$clicktoFade();
-   }
  }
 </script>
 <style lang="scss">
@@ -26,12 +26,23 @@ html {
   height: 100vh;
   line-height: 100vh;
   position: relative;
+  z-index: 9;
 }
 
 .icon-scroll,
 .icon-scroll:before {
   position: absolute;
   left: 50%;
+  z-index: 10;
+}
+
+.icon-scroll-text{
+  position: absolute;
+  left: calc(50% - 4rem);
+  bottom: 120px;
+  z-index: 10;
+  line-height: normal;
+  color: white;
 }
 
 .icon-scroll {

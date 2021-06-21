@@ -86,6 +86,9 @@
       </div>
     </div>
 
+
+
+
     <div class="tableitem columns is-vcentered" v-for="(post, index) in filteredPosts" :key="post.id">
       <div class="column is-1">
         <p v-html="highlight(post.concert_season) || post.concert_season"></p>
@@ -112,11 +115,12 @@
             <span v-for="person in composition.core_ensemble">
               <span class="arrayitem" v-html="highlight(person) || person"></span>
               <span class="separator">,&nbsp;</span></span>
-            <span v-if="composition.guest_performers">{{ composition.guest_performers }}</span>
+            <span v-if="composition.guest_performers" v-html="highlight(composition.guest_performers) || composition.guest_performers"></span>
           </div>
         </div>
       </div>
     </div>
+
 
     <b-pagination
     :total="total"
@@ -139,9 +143,11 @@
 <script>
 import _ from 'lodash'
 import axios from 'axios'
+
 export default {
   name: 'search',
   components: {
+
   },
   data() {
     return {
@@ -188,7 +194,7 @@ export default {
               compositions: post.acf.archive_compositions
             }
           })
-          // this.posts = _(this.posts).sortBy("concert_season", "dec").value();
+          this.posts = _(this.posts).sortBy("concert_season", "desc").value();
         }) // then
         .catch(error => {
           console.log(error);
@@ -236,7 +242,6 @@ export default {
           //   return str;
           // }
 
-          let totalPosts = this.posts
 
           let posts = this.posts
 
@@ -328,21 +333,20 @@ export default {
           if (this.search != '' && this.search) {
             posts = posts.filter((post) => {
 
-              // let compositionTitle = post.compositions.findIndex((c) => {
-              //    return c.composition_title.toLowerCase().includes(this.search.toLowerCase())
-              // })
-              //
-              // let composerName = post.compositions.findIndex((c) => {
-              //   return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
-              // })
+              let compositionTitle = post.compositions.findIndex((c) => {
+                 return c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+              })
 
-              // return composerName !== -1 || compositionTitle !== -1 ||
-              return post.concert_season.toLowerCase().includes(this.search.toLowerCase()) ||
+              let composerName = post.compositions.findIndex((c) => {
+                return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+              })
+
+              return composerName !== -1 || compositionTitle !== -1 ||
+                     post.concert_season.toLowerCase().includes(this.search.toLowerCase()) ||
                      post.concert_title.toLowerCase().includes(this.search.toLowerCase())
 
            })
          }
-
 
          // posts.sort((a,b) => (a.concert_title > b.concert_title) ? 1 : -1)
 

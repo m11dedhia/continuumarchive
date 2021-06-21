@@ -3,7 +3,7 @@
       <div v-for="post in posts" :key="post.id" class="p-3">
         <section class="columns concert-info">
           <div class="column is-4">
-            <p class="mb-2"><a href="/">{{ post.acf.concert_season }}</a></p>
+            <p class="mb-2"><a href="/#filters">{{ post.acf.concert_season }}</a></p>
             <h1 class="is-size-2 has-text-weight-bold my-2">{{ post.acf.concert_title }}</h1>
             <p class="mb-2">
               <span class="icon-text">

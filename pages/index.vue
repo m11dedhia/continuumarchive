@@ -14,7 +14,7 @@ export default {
   },
   head() {
     return {
-      title: "continuum archive",
+      title: "Continuum Contemporary Music Archive",
     }
   }
 }
