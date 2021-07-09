@@ -1,5 +1,9 @@
 <template>
 <div class="p-3">
+    <div v-if="filteredPosts.length == 0" class="landing has-background-primary mb-3">
+       <Instructions />
+    </div>
+
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
         <div class="column is-5">
@@ -69,10 +73,10 @@
 
     <div class="tablehead columns has-text-weight-bold is-uppercase is-hidden-mobile">
       <div class="column is-1">
-        <p>season</p>
+        <p @click="sort('season')" v-bind:class="[sortBy === 'season' ? sortDirection : '']">season</p>
       </div>
       <div class="column is-3">
-        <p>concert</p>
+        <p @click="sort('title')" v-bind:class="[sortBy === 'title' ? sortDirection : '']">concert</p>
       </div>
       <div class="column is-2">
         <p>composition</p>
@@ -85,19 +89,19 @@
       </div>
     </div>
 
-
-    <div class="tableitem columns is-vcentered" v-for="(post, index) in filteredPosts" :key="post.id">
+    <div class="tableitem columns is-vcentered" v-for="post in filteredPosts" :key="post.id">
       <div class="column is-1">
-        <p v-html="highlight(post.concert_season) || post.concert_season"></p>
+        <p v-html="highlight(post.season) || post.season"></p>
       </div>
       <div class="column is-3">
-        <p><nuxt-link :to="`/concerts/` + post.id" target="_blank" v-html="highlight(post.concert_title) || post.concert_title"></nuxt-link>
-          <span v-if="post.concert_poster"><i class="has-text-grey fas fa-image"></i></span>
-          <span v-if="post.concert_images"><i class="has-text-grey fas fa-images"></i></span></p>
+        <p><nuxt-link :to="`/concerts/` + post.id" target="_blank" v-html="highlight(post.title) || post.title"></nuxt-link>
+          <span v-if="post.poster"><i class="has-text-grey fas fa-image"></i></span>
+          <span v-if="post.images"><i class="has-text-grey fas fa-images"></i></span></p>
       </div>
       <div class="column is-8">
-        <div class="columns is-vcentered" v-for="composition in post.compositions" v-if="composition.show = 'false'">
+        <div class="columns is-vcentered" v-for="composition in post.compositions" v-if="composition.show == '0'">
           <div class="column is-3">
+              <span>{{ composition.show }}</span>
               <span v-html="highlight(composition.composition_title) || composition.composition_title"></span>
               <span v-if="composition.composition_year">({{ composition.composition_year }})</span>
               <span v-if="composition.world_premiere"><i class="has-text-grey fas fa-globe"></i></span>
@@ -111,13 +115,13 @@
           <div class="column is-6">
             <span v-for="person in composition.core_ensemble">
               <span class="arrayitem" v-html="highlight(person) || person"></span>
-              <span class="separator">,&nbsp;</span></span>
+              <span class="separator">,&nbsp;</span>
+            </span>
             <span v-if="composition.guest_performers" v-html="highlight(composition.guest_performers) || composition.guest_performers"></span>
           </div>
         </div>
       </div>
     </div>
-
 
     <b-pagination
     :total="total"
@@ -138,13 +142,12 @@
   </div>
 </template>
 <script>
-import _ from 'lodash'
+// import Instructions from "@/components/Instructions"
 import axios from 'axios'
-
 export default {
   name: 'search',
   components: {
-
+     // Instructions
   },
   data() {
     return {
@@ -176,21 +179,13 @@ export default {
           this.posts = response.data.map((post) => {
             return{
               id: post.id,
-              concert_season: post.acf.concert_season,
-              concert_title: post.acf.concert_title,
-              concert_date: post.acf.concert_date,
-              concert_venue: post.acf.concert_venue,
-              concert_poster: post.acf.concert_poster,
-              concert_images: post.acf.concert_images,
-              concert_funders: post.acf.concert_funders,
-              concert_other_funders: post.acf.concert_other_funders,
-              concert_producers: post.acf.concert_producers,
-              concert_presenters: post.acf.concert_presenters,
-              concert_sponsors: post.acf.concert_sponsors,
+              season: post.acf.concert_season,
+              title: post.acf.concert_title,
+              poster: post.acf.concert_poster,
+              images: post.acf.concert_images,
               compositions: post.acf.archive_compositions
             }
           })
-          // this.posts = _(this.posts).sortBy("concert_season", "desc").value();
         }) // then
         .catch(error => {
           console.log(error);
@@ -209,102 +204,107 @@ export default {
    stringify( arr ) {
      return arr.join(', ')
    },
+   sort: function(s){
+     if(s === this.sortBy) {
+         this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+     }
+     this.sortBy = s;
+   },
   },
   computed: {
-     filteredPosts: function(){
-          let posts = this.posts
+     filteredPosts(){
+        let oriposts = this.posts;
+        let finalposts = [];
+        finalposts = Array.from(oriposts);
 
-          if (this.hasImages) {
-            posts = posts.filter((post) => {
-              return post.concert_images.length != 0
+        if (this.hasImages) {
+          finalposts = finalposts.filter((post) => {
+            return post.images.length != 0
+          })
+        }
+
+        if (this.hasVideo) {
+          finalposts = finalposts.filter(post =>
+            post.compositions.some(
+              c => c.composition_video_link.length != 0
+            )
+          )
+        }
+
+        // console.log(finalposts + "1")
+
+        if (this.hasWorldPremiere) {
+          finalposts = finalposts.filter(post =>
+            post.compositions.some(
+              c => c.world_premiere == true
+            )
+          )
+
+          // console.log(finalposts + "2")
+
+
+          finalposts = finalposts.forEach(function(v, i, a){
+            a[i].compositions.forEach(function(item, index, arr){
+              arr[index].show = '1';
             })
-          }
+          })
 
-          if (this.hasVideo) {
-            posts = posts.filter((post) => {
-              let video = post.compositions.findIndex((c) =>{
-                return c.composition_video_link.length != 0
-              })
-
-              return video !== -1
-
-            })
-          }
-
-          if (this.hasWorldPremiere) {
-            posts = posts.filter((post) => {
-              let worldPremiere = post.compositions.findIndex((c) =>{
-                return c.world_premiere == true
-              })
-
-              return worldPremiere !== -1
-
-            })
-          }
-
-          if (this.hasCanadianPremiere) {
-            posts = posts.filter((post) => {
-              let canadianPremiere = post.compositions.findIndex((c) =>{
-                return c.canadian_premiere == true
-              })
-
-              return canadianPremiere !== -1
-
-            })
-          }
-
-          //
-          // if (this.hasCanadianPremiere) {
-          //   posts = posts.filter((post) => {
-          //     let canadianPremiere = post.compositions.find((c) =>{
-          //       return c.canadian_premiere == true
-          //     })
-          //
-          //
-          //   })
-          // }
+          // console.log(finalposts + "3")
 
 
-          // if (this.filteredBy === 'composer') {
-          //
-          //     posts = posts.filter((post) => {
-          //
-          //        let composerName = post.compositions.findIndex((c) => {
-          //          return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
-          //        })
-          //
-          //        return composerName !== -1
-          //
-          //    })
-          //
-          // }
+        }
 
-          // https://gist.github.com/marcelo-ribeiro/abd651b889e4a20e0bab558a05d38d77
+        if (this.hasCanadianPremiere) {
+          finalposts = finalposts.filter(post =>
+            post.compositions.some(
+              c => c.canadian_premiere == true
+            )
+          )
+        }
 
-          if (this.search != '' && this.search) {
-            posts = posts.filter((post) => {
 
-              let compositionTitle = post.compositions.findIndex((c) => {
-                 return c.composition_title.toLowerCase().includes(this.search.toLowerCase())
-              })
+        if (this.search != '' && this.search) {
+              if (this.filteredBy === 'composition') {
+                finalposts = finalposts.filter(post =>
+                  post.compositions.some(
+                    c => c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                  )
+                )
+              } else if (this.filteredBy === 'composer') {
+                  finalposts = finalposts.filter(post =>
+                    post.compositions.some(
+                      c => c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                    )
+                 )
+              } else if (this.filteredBy === 'performer') {
+                  finalposts = finalposts.filter(post =>
+                    post.compositions.some(
+                      c => c.core_ensemble.some(
 
-              let composerName = post.compositions.findIndex((c) => {
-                return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
-              })
+                      )
+                    )
+                 )
+              } else {
+                finalposts = finalposts.filter((post) => {
+                  return post.season.toLowerCase().includes(this.search.toLowerCase()) ||
+                         post.title.toLowerCase().includes(this.search.toLowerCase())
+                })
+              }
+        }
 
-              // var convertedSeason = slugify(post.concert_season);
-              // var convertedCTitle = slugify(post.concert_title);
-
-              return composerName !== -1 || compositionTitle !== -1 ||
-                     post.concert_season.toLowerCase().includes(this.search.toLowerCase()) ||
-                     post.concert_title.toLowerCase().includes(this.search.toLowerCase())
-           })
-         }
+        finalposts.sort((p1,p2) => {
+            let modifier = 1;
+            if(this.sortDirection === 'desc') modifier = -1;
+            if(p1[this.sortBy] < p2[this.sortBy]) return -1 * modifier; if(p1[this.sortBy] > p2[this.sortBy]) return 1 * modifier;
+            return 0;
+        });
 
         // return paginated posts
-        this.total = posts.length
+        this.total = finalposts.length
         let page_number = this.current - 1
-        return posts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
+        return finalposts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
+
+
 
      }, // filteredPosts
 

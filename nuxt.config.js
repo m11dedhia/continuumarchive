@@ -27,6 +27,13 @@ export default {
     ]
   },
 
+  axios: {
+      credentials: false,
+      timeout: 5000
+  },
+
+  // loading: '~/components/Loading.vue',
+
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
     "~/assets/styles/app.scss"
@@ -36,6 +43,7 @@ export default {
   plugins: [
     '~/plugins/ga.client.js',
     '~/plugins/init.client.js',
+    '~/plugins/posts.server.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

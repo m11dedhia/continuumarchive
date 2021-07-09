@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Search from "@/components/Search"
+import Search from "@/components/SearchAlt"
 export default {
   name: 'archive',
   layout: 'home',
@@ -16,6 +16,12 @@ export default {
     return {
       title: "Continuum Contemporary Music Archive",
     }
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$nuxt.$loading.start()
+      setTimeout(() => this.$nuxt.$loading.finish(), 6000)
+    })
   }
 }
 </script>

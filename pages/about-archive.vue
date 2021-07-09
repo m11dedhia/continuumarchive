@@ -2,7 +2,6 @@
   <main>
     <div v-for="post in posts" :key="post.id" class="p-3 container">
       <div v-html="post.content.rendered" class="columns is-vcentered windowheight"></div>
-      
     </div>
   </main>
 </template>
