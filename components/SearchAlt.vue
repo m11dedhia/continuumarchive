@@ -13,6 +13,7 @@
         <div class="column is-2">
           <b-field class="is-full">
               <b-select placeholder="FILTERED BY" v-model="filteredBy">
+                <option value="season-title">By Season or Concert Title</option>
                 <option value="composition">By Composition</option>
                 <option value="composer">By Composer</option>
                 <option value="performer">By Performer</option>
@@ -99,7 +100,7 @@
           <span v-if="post.images"><i class="has-text-grey fas fa-images"></i></span></p>
       </div>
       <div class="column is-8">
-        <div class="columns is-vcentered" v-for="composition in post.compositions" v-if="composition.show == '0'">
+        <div class="columns is-vcentered" v-for="composition in post.compositions" v-if="composition.show = 'false'">
           <div class="column is-3">
               <span>{{ composition.show }}</span>
               <span v-html="highlight(composition.composition_title) || composition.composition_title"></span>
@@ -142,12 +143,12 @@
   </div>
 </template>
 <script>
-// import Instructions from "@/components/Instructions"
+import Instructions from "@/components/Instructions"
 import axios from 'axios'
 export default {
   name: 'search',
   components: {
-     // Instructions
+     Instructions
   },
   data() {
     return {
@@ -223,15 +224,32 @@ export default {
           })
         }
 
+        console.log(finalposts + "1")
+
         if (this.hasVideo) {
           finalposts = finalposts.filter(post =>
             post.compositions.some(
               c => c.composition_video_link.length != 0
             )
           )
+
+          console.log(finalposts + "2")
+
+
+            Object.entries(finalposts).forEach(post => {
+              for (let i = 0; i < post.length; i++){
+                post[i];
+                console.log(post[i])
+
+                for (let p of post){
+                  for (let c of p.compositions){
+                    c.show = '1';
+                  }
+                }
+              }
+          })
         }
 
-        // console.log(finalposts + "1")
 
         if (this.hasWorldPremiere) {
           finalposts = finalposts.filter(post =>
@@ -239,19 +257,6 @@ export default {
               c => c.world_premiere == true
             )
           )
-
-          // console.log(finalposts + "2")
-
-
-          finalposts = finalposts.forEach(function(v, i, a){
-            a[i].compositions.forEach(function(item, index, arr){
-              arr[index].show = '1';
-            })
-          })
-
-          // console.log(finalposts + "3")
-
-
         }
 
         if (this.hasCanadianPremiere) {
@@ -284,7 +289,7 @@ export default {
                       )
                     )
                  )
-              } else {
+              } else if (this.filteredBy === 'season-title'){
                 finalposts = finalposts.filter((post) => {
                   return post.season.toLowerCase().includes(this.search.toLowerCase()) ||
                          post.title.toLowerCase().includes(this.search.toLowerCase())
