@@ -200,9 +200,6 @@ export default {
 				return highlightedData;
 			}
 	 },
-   stringify( arr ) {
-     return arr.join(', ')
-   },
    sort: function(s){
      if(s === this.sortBy) {
          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
