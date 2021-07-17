@@ -12,11 +12,3 @@ Vue.prototype.$openLightbox = () => {
   // }
 
 }
-
-Vue.prototype.$clicktoFade = () => {
-  // document.getElementById("landingBtn").click(function(){
-  //     document.querySelector(".landing").style.opacity = 0;
-  // });
-
-
-}

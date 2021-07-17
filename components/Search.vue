@@ -138,9 +138,7 @@
   </div>
 </template>
 <script>
-import _ from 'lodash'
 import axios from 'axios'
-
 export default {
   name: 'search',
   components: {
@@ -190,7 +188,6 @@ export default {
               compositions: post.acf.archive_compositions
             }
           })
-          // this.posts = _(this.posts).sortBy("concert_season", "desc").value();
         }) // then
         .catch(error => {
           console.log(error);
@@ -253,33 +250,6 @@ export default {
             })
           }
 
-          //
-          // if (this.hasCanadianPremiere) {
-          //   posts = posts.filter((post) => {
-          //     let canadianPremiere = post.compositions.find((c) =>{
-          //       return c.canadian_premiere == true
-          //     })
-          //
-          //
-          //   })
-          // }
-
-
-          // if (this.filteredBy === 'composer') {
-          //
-          //     posts = posts.filter((post) => {
-          //
-          //        let composerName = post.compositions.findIndex((c) => {
-          //          return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
-          //        })
-          //
-          //        return composerName !== -1
-          //
-          //    })
-          //
-          // }
-
-          // https://gist.github.com/marcelo-ribeiro/abd651b889e4a20e0bab558a05d38d77
 
           if (this.search != '' && this.search) {
             posts = posts.filter((post) => {
@@ -291,9 +261,6 @@ export default {
               let composerName = post.compositions.findIndex((c) => {
                 return c.composer_name.toLowerCase().includes(this.search.toLowerCase())
               })
-
-              // var convertedSeason = slugify(post.concert_season);
-              // var convertedCTitle = slugify(post.concert_title);
 
               return composerName !== -1 || compositionTitle !== -1 ||
                      post.concert_season.toLowerCase().includes(this.search.toLowerCase()) ||

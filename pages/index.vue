@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import Search from "@/components/SearchAlt"
+import Search from "@/components/SearchBeta"
 export default {
   name: 'archive',
   layout: 'home',
