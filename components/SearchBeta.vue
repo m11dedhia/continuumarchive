@@ -1,6 +1,6 @@
 <template>
 <div class="p-3">
-    <div v-if="filteredPosts.length == 0" class="landing has-background-primary mb-3">
+    <div v-if="!loaded" class="landing has-background-primary mb-3">
        <Instructions />
     </div>
     <section id="filters" class="mb-4 is-hidden-mobile">
@@ -163,6 +163,7 @@ export default {
 	    perPage: 20,
       sortBy: 'season',
       sortDirection: 'asc',
+      loaded: false,
     }
   },
   created() {
@@ -176,7 +177,7 @@ export default {
       axios.get(this.ep)
         .then(response => {
           this.posts = response.data.map((post) => {
-            return{
+            return {
               id: post.id,
               season: post.acf.concert_season,
               title: post.acf.concert_title,
@@ -185,6 +186,7 @@ export default {
               compositions: post.acf.archive_compositions
             }
           })
+          this.loaded = true
         }) // then
         .catch(error => {
           console.log(error);
@@ -222,7 +224,7 @@ export default {
         if (this.hasVideo) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => c.composition_video_link.length == 0
+              c => !c.composition_video_link.length == 0
             )
             post.compositions.filter(c => {
               let r = c.composition_video_link.length == 0
@@ -246,7 +248,7 @@ export default {
         if (this.hasWorldPremiere) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => c.world_premiere == false
+              c => !c.world_premiere == false
             )
             post.compositions.filter(c => {
               let r = c.world_premiere == false
@@ -260,7 +262,7 @@ export default {
         if (this.hasCanadianPremiere) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => c.canadian_premiere == false
+              c => !c.canadian_premiere == false
             )
             post.compositions.filter(c => {
               let r = c.canadian_premiere == false
@@ -275,7 +277,7 @@ export default {
               if (this.filteredBy === 'composition') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
-                    c => !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                    c => c.composition_title.toLowerCase().includes(this.search.toLowerCase())
                   )
                   post.compositions.filter(c => {
                     let r = !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
@@ -287,7 +289,7 @@ export default {
               } else if (this.filteredBy === 'composer') {
                  finalposts = finalposts.filter(post => {
                    let res = post.compositions.some(
-                     c => !c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                     c => c.composer_name.toLowerCase().includes(this.search.toLowerCase())
                    )
                    post.compositions.filter(c => {
                      let r = !c.composer_name.toLowerCase().includes(this.search.toLowerCase())
@@ -298,8 +300,15 @@ export default {
                  })
               } else if (this.filteredBy === 'performer') {
                 finalposts = finalposts.filter(post => {
-
-
+                  let res = post.compositions.some(
+                     c => c.guest_performers.toLowerCase().includes(this.search.toLowerCase())
+                   )
+                   post.compositions.filter(c => {
+                     let r = !c.guest_performers.toLowerCase().includes(this.search.toLowerCase())
+                     c.hide = r
+                     return r
+                   })
+                   return res
                 })
               } else if (this.filteredBy === 'season-title'){
                 finalposts = finalposts.filter(post => {
