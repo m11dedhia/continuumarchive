@@ -301,17 +301,10 @@ export default {
                    return res
                  })
               } else if (this.filteredBy === 'performer') {
-                // let p = c.composition.core_ensemble.join(', ') + c.guest_performers
+
                 finalposts = finalposts.filter(post => {
-                  let res = post.compositions.some(
-                    c => !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
-                  )
-                  post.compositions.filter(c => {
-                    let r = !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
-                    c.hide = r
-                    return r
-                  })
-                  return res
+                
+
                 })
               } else if (this.filteredBy === 'season-title'){
                 finalposts = finalposts.filter(post => {
