@@ -3,7 +3,6 @@
     <div v-if="filteredPosts.length == 0" class="landing has-background-primary mb-3">
        <Instructions />
     </div>
-
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
         <div class="column is-5">
@@ -20,6 +19,7 @@
               </b-select>
           </b-field>
         </div>
+
         <div class="column is-5">
          <b-checkbox v-model="hasImages" type="is-info" native-value="images" size="is-small">
             <label for="images">
@@ -74,10 +74,10 @@
 
     <div class="tablehead columns has-text-weight-bold is-uppercase is-hidden-mobile">
       <div class="column is-1">
-        <p @click="sort('season')" v-bind:class="[sortBy === 'season' ? sortDirection : '']">season</p>
+        <p @click="sort('season')" :class="[sortBy === 'season' ? sortDirection : '']">season</p>
       </div>
       <div class="column is-3">
-        <p @click="sort('title')" v-bind:class="[sortBy === 'title' ? sortDirection : '']">concert</p>
+        <p @click="sort('title')" :class="[sortBy === 'title' ? sortDirection : '']">concert</p>
       </div>
       <div class="column is-2">
         <p>composition</p>
@@ -100,9 +100,10 @@
           <span v-if="post.images"><i class="has-text-grey fas fa-images"></i></span></p>
       </div>
       <div class="column is-8">
-        <div class="columns is-vcentered" v-for="composition in post.compositions" v-if="composition.show = 'false'">
+        <div class="columns is-vcentered" v-for="composition in post.compositions" :class="{ 'is-hidden' : composition.hide == true }" >
+        <!-- <div class="columns is-vcentered composition-item" v-for="composition in post.compositions"> -->
           <div class="column is-3">
-              <span>{{ composition.show }}</span>
+              <!-- <span>{{ composition.hide }}</span> -->
               <span v-html="highlight(composition.composition_title) || composition.composition_title"></span>
               <span v-if="composition.composition_year">({{ composition.composition_year }})</span>
               <span v-if="composition.world_premiere"><i class="has-text-grey fas fa-globe"></i></span>
@@ -115,10 +116,8 @@
           </div>
           <div class="column is-6">
             <span v-for="person in composition.core_ensemble">
-              <span class="arrayitem" v-html="highlight(person) || person"></span>
-              <span class="separator">,&nbsp;</span>
-            </span>
-            <span v-if="composition.guest_performers" v-html="highlight(composition.guest_performers) || composition.guest_performers"></span>
+              <span class="arrayitem" v-html="highlight(person) || person"></span><span class="separator">,&nbsp;</span>
+            </span><span v-if="composition.guest_performers" v-html="highlight(composition.guest_performers) || composition.guest_performers"></span>
           </div>
         </div>
       </div>
@@ -131,7 +130,7 @@
    >
    </b-pagination>
 
-   <div id="postnum" class="fixed">
+   <div id="postnum" class="fixed is-hidden-mobile">
       <small v-if="filteredPosts.length == total">
 				Found {{ total }} items
 			</small>
@@ -224,73 +223,98 @@ export default {
           })
         }
 
-        console.log(finalposts + "1")
-
         if (this.hasVideo) {
-          finalposts = finalposts.filter(post =>
-            post.compositions.some(
-              c => c.composition_video_link.length != 0
+          finalposts = finalposts.filter(post => {
+            let res = post.compositions.some(
+              c => c.composition_video_link.length == 0
             )
-          )
-
-          console.log(finalposts + "2")
-
-
-            Object.entries(finalposts).forEach(post => {
-              for (let i = 0; i < post.length; i++){
-                post[i];
-                console.log(post[i])
-
-                for (let p of post){
-                  for (let c of p.compositions){
-                    c.show = '1';
-                  }
-                }
-              }
+            post.compositions.filter(c => {
+              let r = c.composition_video_link.length == 0
+              c.hide = r
+              return r
+            })
+            return res
+          })
+        } else {
+          finalposts = finalposts.filter(post => {
+            let res = post.compositions.some(
+              c => c.composition_video_link.length == 0
+            )
+            post.compositions.filter(c => {
+              c.hide = false
+            })
+            return res
           })
         }
 
-
         if (this.hasWorldPremiere) {
-          finalposts = finalposts.filter(post =>
-            post.compositions.some(
-              c => c.world_premiere == true
+          finalposts = finalposts.filter(post => {
+            let res = post.compositions.some(
+              c => c.world_premiere == false
             )
-          )
+            post.compositions.filter(c => {
+              let r = c.world_premiere == false
+              c.hide = r
+              return r
+            })
+            return res
+          })
         }
 
         if (this.hasCanadianPremiere) {
-          finalposts = finalposts.filter(post =>
-            post.compositions.some(
-              c => c.canadian_premiere == true
+          finalposts = finalposts.filter(post => {
+            let res = post.compositions.some(
+              c => c.canadian_premiere == false
             )
-          )
+            post.compositions.filter(c => {
+              let r = c.canadian_premiere == false
+              c.hide = r
+              return r
+            })
+            return res
+          })
         }
-
 
         if (this.search != '' && this.search) {
               if (this.filteredBy === 'composition') {
-                finalposts = finalposts.filter(post =>
-                  post.compositions.some(
-                    c => c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                finalposts = finalposts.filter(post => {
+                  let res = post.compositions.some(
+                    c => !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
                   )
-                )
+                  post.compositions.filter(c => {
+                    let r = !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                    c.hide = r
+                    return r
+                  })
+                  return res
+                })
               } else if (this.filteredBy === 'composer') {
-                  finalposts = finalposts.filter(post =>
-                    post.compositions.some(
-                      c => c.composer_name.toLowerCase().includes(this.search.toLowerCase())
-                    )
-                 )
+                 finalposts = finalposts.filter(post => {
+                   let res = post.compositions.some(
+                     c => !c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                   )
+                   post.compositions.filter(c => {
+                     let r = !c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                     c.hide = r
+                     return r
+                   })
+                   return res
+                 })
               } else if (this.filteredBy === 'performer') {
-                  finalposts = finalposts.filter(post =>
-                    post.compositions.some(
-                      c => c.core_ensemble.some(
-
-                      )
-                    )
-                 )
+                // let p = c.composition.core_ensemble.join(', ') + c.guest_performers
+                finalposts = finalposts.filter(post => {
+                  let res = post.compositions.some(
+                    c => !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                  )
+                  post.compositions.filter(c => {
+                    let r = !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                    c.hide = r
+                    return r
+                  })
+                  return res
+                })
               } else if (this.filteredBy === 'season-title'){
-                finalposts = finalposts.filter((post) => {
+                finalposts = finalposts.filter(post => {
                   return post.season.toLowerCase().includes(this.search.toLowerCase()) ||
                          post.title.toLowerCase().includes(this.search.toLowerCase())
                 })
@@ -308,11 +332,7 @@ export default {
         this.total = finalposts.length
         let page_number = this.current - 1
         return finalposts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
-
-
-
      }, // filteredPosts
-
   } // computed
 };
 </script>

@@ -114,10 +114,8 @@
 
   </main>
 </template>
-
 <script>
 import axios from 'axios'
-
 export default {
   layout: 'default',
   name: 'archive',
@@ -138,6 +136,7 @@ export default {
   },
   created() {
     this.getAllPosts();
+    // this.openLightbox();
   },
   methods: {
     getAllPosts() {
@@ -160,7 +159,7 @@ export default {
         compositionInfoElement.classList.remove('is-hidden')
         compositionInfoElement.classList.add('is-block')
       }
-    }
+    },
   },
   computed: {
 
@@ -170,7 +169,6 @@ export default {
    }
 }
 </script>
-
 <style lang="scss">
 
 </style>

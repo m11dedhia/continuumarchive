@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="logo-invert py-6">
+    <div class="logo-invert p-6">
       <a href="#">
         <img src="https://www.continuummusic.ca/wp-content/uploads/2020/09/ccm-logo-1536x258.png" alt="continuum contemporary music logo"/>
       </a>
     </div>
     <div v-for="post in posts" :key="post.id" class="p-3 container">
-      <div v-html="post.content.rendered" class="columns is-vcentered windowheight"></div>
+      <div v-html="post.content.rendered" class="columns is-vcentered windowheight p-4"></div>
     </div>
     <a class="icon-scroll"></a>
     <span class="icon-scroll-text">LOADING</span>
