@@ -105,8 +105,13 @@
         <section class="concert-desc my-4 py-4" v-if="post.acf.concert_info">
           <div class="container" v-html="post.acf.concert_info"></div>
         </section>
-        <section class="concert-images my-4" v-if="post.acf.concert_images">
-          <div v-html="post.acf.concert_images"></div>
+        <section class="concert-images my-4 gallery galleryid-1192 gallery-columns-3" v-if="post.acf.concert_images">
+          <div v-for="(image, imgIndex) in images">
+            <img class="fullwidth concert-poster" :src="image" :alt="post.acf.concert_title" @click="setImage(imgIndex)">
+          </div>
+          <b-modal v-model="isComponentModalImageActive">
+              <img class="fullwidth" :src="images[index]">
+          </b-modal>
         </section>
 
       </div>
@@ -131,17 +136,21 @@ export default {
     return {
       ep: 'https://continuummusic.ca/wp-json/acf/v3/concerts?per_page=1000',
       posts: '',
-      isComponentModalActive: false
+      isComponentModalActive: false,
+      isComponentModalImageActive: false,
+      images: [],
+      index: null
     }
   },
-  created() {
-    this.getAllPosts();
+  async created() {
+    await this.getAllPosts()
+    await this.getImages(this.posts[0].acf.concert_images)
     // this.openLightbox();
   },
   methods: {
-    getAllPosts() {
+    async getAllPosts() {
       const postId = this.$route.params.id
-      axios.get(this.ep)
+      await axios.get(this.ep)
         .then(response => {
           this.posts = response.data.filter(post => post.id == postId)
           this.postTitle = this.posts[0].acf.concert_title
@@ -160,6 +169,21 @@ export default {
         compositionInfoElement.classList.add('is-block')
       }
     },
+    getImages(imageHTML) {
+      const parser = new DOMParser();
+      const obj = parser.parseFromString(imageHTML, "text/html");
+      const images = []
+      if (obj.body.firstElementChild != undefined) {
+        obj.body.firstElementChild.children.forEach((child) => {
+          images.push(child.firstElementChild.firstElementChild.href)
+        })
+        this.images = images
+      }
+    },
+    setImage(index) {
+      this.isComponentModalImageActive = true
+      this.index = index
+    }
   },
   computed: {
 
