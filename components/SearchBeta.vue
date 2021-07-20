@@ -192,9 +192,33 @@ export default {
           console.log(error);
         })
    },
+   removeAccents (text) {
+     const accentsMap = new Map([
+        ["A", "Á|À|Ã|Â|Ä"],
+        ["a", "á|à|ã|â|ä"],
+        ["E", "É|È|Ê|Ë"],
+        ["e", "é|è|ê|ë"],
+        ["I", "Í|Ì|Î|Ï"],
+        ["i", "í|ì|î|ï"],
+        ["O", "Ó|Ò|Ô|Õ|Ö"],
+        ["o", "ó|ò|ô|õ|ö"],
+        ["U", "Ú|Ù|Û|Ü"],
+        ["u", "ú|ù|û|ü"],
+        ["C", "Ç"],
+        ["c", "ç"],
+        ["N", "Ñ"],
+        ["n", "ñ"]
+      ]);
+
+      const reducer = (acc, [key]) => acc.replace(new RegExp(accentsMap.get(key), "g"), key);
+
+     return [...accentsMap].reduce(reducer, text);
+   },
    highlight( data ) {
 			if ( this.search ) {
-				const pattern = new RegExp( this.search, 'i' );
+        data = this.removeAccents(data);
+        const searcher = this.removeAccents(this.search)
+				const pattern = new RegExp( searcher, 'i' );
 				const highlightedData = data.replace(
 					pattern,
 					`<span class="highlighted">${this.search}</span>`
@@ -202,6 +226,10 @@ export default {
 				return highlightedData;
 			}
 	 },
+   ensemble_checker (elem) {
+     return this.removeAccents(elem.toLowerCase()).includes(this.search.toLowerCase())
+            || (elem.toLowerCase()).includes(this.search.toLowerCase())
+   },
    sort: function(s){
      if(s === this.sortBy) {
          this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
@@ -277,10 +305,12 @@ export default {
               if (this.filteredBy === 'composition') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
-                    c => c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                    c => this.removeAccents(c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
+                        || (c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
                   )
                   post.compositions.filter(c => {
-                    let r = !c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                    let r = !(c.composition_title.toLowerCase().includes(this.search.toLowerCase())
+                        || (c.composition_title.toLowerCase()).includes(this.search.toLowerCase()))
                     c.hide = r
                     return r
                   })
@@ -289,10 +319,12 @@ export default {
               } else if (this.filteredBy === 'composer') {
                  finalposts = finalposts.filter(post => {
                    let res = post.compositions.some(
-                     c => c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                     c => this.removeAccents(c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                        || (c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
                    )
                    post.compositions.filter(c => {
-                     let r = !c.composer_name.toLowerCase().includes(this.search.toLowerCase())
+                     let r = !(this.removeAccents(c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.composer_name.toLowerCase()).includes(this.search.toLowerCase()))
                      c.hide = r
                      return r
                    })
@@ -301,10 +333,14 @@ export default {
               } else if (this.filteredBy === 'performer') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
-                     c => c.guest_performers.toLowerCase().includes(this.search.toLowerCase())
+                     c => (this.removeAccents(c.guest_performers.toLowerCase()).includes(this.search.toLowerCase())
+                        || (c.guest_performers.toLowerCase()).includes(this.search.toLowerCase()))
+                          || c.core_ensemble.some(this.ensemble_checker)
                    )
                    post.compositions.filter(c => {
-                     let r = !c.guest_performers.toLowerCase().includes(this.search.toLowerCase())
+                     let r = !((this.removeAccents(c.guest_performers.toLowerCase()).includes(this.search.toLowerCase())
+                        || (c.guest_performers.toLowerCase()).includes(this.search.toLowerCase()))
+                          || c.core_ensemble.some(this.ensemble_checker))
                      c.hide = r
                      return r
                    })
