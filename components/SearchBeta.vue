@@ -131,10 +131,10 @@
 
    <div id="postnum" class="fixed is-hidden-mobile">
       <small v-if="filteredPosts.length == total">
-				Found {{ total }} items
+				Found {{ total }} Concerts
 			</small>
       <small v-else>
-				Found {{ filteredPosts.length }} items
+				Found {{ filteredPosts.length }} Concerts
 			</small>
    </div>
 
@@ -248,10 +248,10 @@ export default {
         if (this.hasWorldPremiere) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => !c.world_premiere == false
+              c => !c.world_premiere == 0
             )
             post.compositions.filter(c => {
-              let r = c.world_premiere == false
+              let r = c.world_premiere == 0
               c.hide = r
               return r
             })
@@ -273,7 +273,7 @@ export default {
           })
         }
 
-        if (this.search != '' && this.search) {
+        // if (this.search != '' && this.search) {
               if (this.filteredBy === 'composition') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
@@ -316,7 +316,7 @@ export default {
                          post.title.toLowerCase().includes(this.search.toLowerCase())
                 })
               }
-        }
+        // }
 
         finalposts.sort((p1,p2) => {
             let modifier = 1;
