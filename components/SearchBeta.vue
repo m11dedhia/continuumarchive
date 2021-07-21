@@ -1,8 +1,8 @@
 <template>
 <div class="p-3">
-    <div v-if="!loaded" class="landing has-background-primary mb-3">
+    <!-- <div v-if="!loaded" class="landing has-background-primary mb-3">
        <Instructions />
-    </div>
+    </div> -->
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
         <div class="column is-5">
