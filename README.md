@@ -26,6 +26,18 @@ When both IMAGE & VIDEO are checked, the result is 41 entries.
 4. VIDEO
 Same with this checkbox.
 
+- Consolidate Dropdown Filtering
+
+Allow users to search by different categories without the dropdown filtering
+
+- Reduce Load Time
+
+
+
+
+
+
+
 ## To Do (by July 20th)
 - Reduce Load Time
 - Search (/components/SearchBeta.vue)
