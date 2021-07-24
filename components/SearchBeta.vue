@@ -5,18 +5,38 @@
     </div> -->
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
-        <div class="column is-5">
+        <div class="column is-3">
           <b-input type="search" class="search column is-full" placeholder="search" v-model="search"></b-input>
         </div>
 
-        <div class="column is-2">
+        <div class="column is-4">
           <b-field class="is-full">
-              <b-select placeholder="FILTERED BY" v-model="filteredBy">
+            <b-radio v-model="filteredBy"
+                name="name"
+                native-value="season-title">
+                By Season or Concert Title
+            </b-radio>
+            <b-radio v-model="filteredBy"
+                name="name"
+                native-value="composition">
+                By Composition
+            </b-radio>
+            <b-radio v-model="filteredBy"
+                name="name"
+                native-value="composer">
+                By Composer
+            </b-radio>
+            <b-radio v-model="filteredBy"
+                name="name"
+                native-value="performer">
+                By Performer
+            </b-radio>
+              <!-- <b-select placeholder="FILTERED BY" v-model="filteredBy">
                 <option value="season-title">By Season or Concert Title</option>
                 <option value="composition">By Composition</option>
                 <option value="composer">By Composer</option>
                 <option value="performer">By Performer</option>
-              </b-select>
+              </b-select> -->
           </b-field>
         </div>
 
@@ -258,16 +278,6 @@ export default {
               let r = c.composition_video_link.length == 0
               c.hide = r
               return r
-            })
-            return res
-          })
-        } else {
-          finalposts = finalposts.filter(post => {
-            let res = post.compositions.some(
-              c => c.composition_video_link.length == 0
-            )
-            post.compositions.filter(c => {
-              c.hide = false
             })
             return res
           })
