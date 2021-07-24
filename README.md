@@ -4,7 +4,41 @@
 - decoupled Nuxt + Wordpress RESTful API (ACF)
 - deploy via Netlify
 
-## To Do
+## To Do (by July 25th)
+- Missing Data on the Frontend
+1. The entire list of the entries shown on the homepage does not match the entire list from https://continuummusic.ca/wp-json/acf/v3/concerts?per_page=1000
+e.g. id: 681 exists in the database, but not showing on the homepage
+
+- Checkbox Filter Discrepancy & Allow filtering though multiple checkboxes
+1. CANADIAN PREMIERE
+When this checkbox is checked, currently only two entires are showing. However, there are a lot more entire that meet the requirement.
+
+2. WORLD PREMIERE
+Same with this checkbox.
+When WORLD PREMIERE is checked, the result is 37 entires.
+When both WORLD PREMIERE & VIDEO are checked, the result is 89 entries.
+
+3. IMAGE
+Same with this checkbox.
+When IMAGE is checked, the result is 17 entires.
+When both IMAGE & VIDEO are checked, the result is 41 entries.
+
+4. VIDEO
+Same with this checkbox.
+
+- Consolidate Dropdown Filtering
+
+Allow users to search by different categories without the dropdown filtering
+
+- Reduce Load Time
+
+
+
+
+
+
+
+## To Do (by July 20th)
 - Reduce Load Time
 - Search (/components/SearchBeta.vue)
 1. when search By Composition: hide the Concerts that do not include the input strings

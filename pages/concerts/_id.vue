@@ -145,7 +145,6 @@ export default {
   async created() {
     await this.getAllPosts()
     await this.getImages(this.posts[0].acf.concert_images)
-    // this.openLightbox();
   },
   methods: {
     async getAllPosts() {
@@ -187,10 +186,7 @@ export default {
   },
   computed: {
 
-  }, // computed
-   mounted(){
-    this.$openLightbox();
-   }
+  },
 }
 </script>
 <style lang="scss">
