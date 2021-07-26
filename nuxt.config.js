@@ -42,7 +42,6 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/ga.client.js',
-    '~/plugins/init.client.js',
     '~/plugins/posts.server.js',
   ],
 

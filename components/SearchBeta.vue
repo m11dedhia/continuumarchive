@@ -1,8 +1,8 @@
 <template>
 <div class="p-3">
-    <div v-if="!loaded" class="landing has-background-primary mb-3">
+    <!-- <div v-if="!loaded" class="landing has-background-primary mb-3">
        <Instructions />
-    </div>
+    </div> -->
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
         <div class="column is-5">
@@ -131,10 +131,10 @@
 
    <div id="postnum" class="fixed is-hidden-mobile">
       <small v-if="filteredPosts.length == total">
-				Found {{ total }} items
+				Found {{ total }} Concerts
 			</small>
       <small v-else>
-				Found {{ filteredPosts.length }} items
+				Found {{ filteredPosts.length }} Concerts
 			</small>
    </div>
 
@@ -266,10 +266,10 @@ export default {
         if (this.hasWorldPremiere) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => !c.world_premiere == false
+              c => !c.world_premiere == 0
             )
             post.compositions.filter(c => {
-              let r = c.world_premiere == false
+              let r = c.world_premiere == 0
               c.hide = r
               return r
             })
@@ -392,9 +392,9 @@ export default {
         this.total = finalposts.length
         let page_number = this.current - 1
         return finalposts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
-     }, // filteredPosts
+     } // filteredPosts
   } // computed
-};
+}
 </script>
 <style lang="scss">
 
