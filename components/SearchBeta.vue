@@ -5,38 +5,18 @@
     </div>
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
-        <div class="column is-3">
+        <div class="column is-5">
           <b-input type="search" class="search column is-full" placeholder="search" v-model="search"></b-input>
         </div>
 
-        <div class="column is-4">
+        <div class="column is-2">
           <b-field class="is-full">
-            <b-radio v-model="filteredBy"
-                name="name"
-                native-value="season-title">
-                By Season or Concert Title
-            </b-radio>
-            <b-radio v-model="filteredBy"
-                name="name"
-                native-value="composition">
-                By Composition
-            </b-radio>
-            <b-radio v-model="filteredBy"
-                name="name"
-                native-value="composer">
-                By Composer
-            </b-radio>
-            <b-radio v-model="filteredBy"
-                name="name"
-                native-value="performer">
-                By Performer
-            </b-radio>
-              <!-- <b-select placeholder="FILTERED BY" v-model="filteredBy">
+              <b-select placeholder="FILTERED BY" v-model="filteredBy">
                 <option value="season-title">By Season or Concert Title</option>
                 <option value="composition">By Composition</option>
                 <option value="composer">By Composer</option>
                 <option value="performer">By Performer</option>
-              </b-select> -->
+              </b-select>
           </b-field>
         </div>
 
@@ -311,8 +291,45 @@ export default {
           })
         }
 
+        if (!(this.hasWorldPremiere || this.hasCanadianPremiere)) {
+          finalposts.forEach((post) => {
+            post.compositions.forEach((composition) => {
+              composition.hide = false
+            })
+          })
+        }
+
+        if (this.hasWorldPremiere && this.hasCanadianPremiere) {
+          finalposts = finalposts.filter(post => {
+            let res = false;
+            for(let i=0;i<post.compositions.length;i++) {
+              if (post.compositions.canadian_premiere && post.compositions.world_premiere) {
+                res = true;
+              } else {
+                post.compositions.hide = true;
+              }
+            }
+            return res
+          })
+        }
+
         if (this.search != '' && this.search) {
-              if (this.filteredBy === 'composition') {
+              if (this.filteredBy === 'FILTERED BY') {
+                finalposts = finalposts.filter((post) => {
+                  let res = post.compositions.some(
+                    c => (this.removeAccents(c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
+                          || this.removeAccents(c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                          || (this.removeAccents(c.guest_performers.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.guest_performers.toLowerCase()).includes(this.search.toLowerCase()))
+                          || c.core_ensemble.some(this.ensemble_checker)
+                        ) || post.season.toLowerCase().includes(this.search.toLowerCase())
+                          || post.title.toLowerCase().includes(this.search.toLowerCase())
+                  )
+                  return res;
+                })
+              } else if (this.filteredBy === 'composition') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
                     c => this.removeAccents(c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
