@@ -311,8 +311,45 @@ export default {
           })
         }
 
-        // if (this.search != '' && this.search) {
-              if (this.filteredBy === 'composition') {
+        if (!(this.hasWorldPremiere || this.hasCanadianPremiere)) {
+          finalposts.forEach((post) => {
+            post.compositions.forEach((composition) => {
+              composition.hide = false
+            })
+          })
+        }
+
+        if (this.hasWorldPremiere && this.hasCanadianPremiere) {
+          finalposts = finalposts.filter(post => {
+            let res = false;
+            for(let i=0;i<post.compositions.length;i++) {
+              if (post.compositions.canadian_premiere && post.compositions.world_premiere) {
+                res = true;
+              } else {
+                post.compositions.hide = true;
+              }
+            }
+            return res
+          })
+        }
+
+        if (this.search != '' && this.search) {
+              if (this.filteredBy === 'FILTERED BY') {
+                finalposts = finalposts.filter((post) => {
+                  let res = post.compositions.some(
+                    c => (this.removeAccents(c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
+                          || this.removeAccents(c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
+                          || (this.removeAccents(c.guest_performers.toLowerCase()).includes(this.search.toLowerCase())
+                          || (c.guest_performers.toLowerCase()).includes(this.search.toLowerCase()))
+                          || c.core_ensemble.some(this.ensemble_checker)
+                        ) || post.season.toLowerCase().includes(this.search.toLowerCase())
+                          || post.title.toLowerCase().includes(this.search.toLowerCase())
+                  )
+                  return res;
+                })
+              } else if (this.filteredBy === 'composition') {
                 finalposts = finalposts.filter(post => {
                   let res = post.compositions.some(
                     c => this.removeAccents(c.composition_title.toLowerCase()).includes(this.search.toLowerCase())
@@ -362,7 +399,7 @@ export default {
                          post.title.toLowerCase().includes(this.search.toLowerCase())
                 })
               }
-        // }
+        }
 
         finalposts.sort((p1,p2) => {
             let modifier = 1;
@@ -375,9 +412,9 @@ export default {
         this.total = finalposts.length
         let page_number = this.current - 1
         return finalposts.slice(page_number * this.perPage, (page_number + 1) * this.perPage);
-     }, // filteredPosts
+     } // filteredPosts
   } // computed
-};
+}
 </script>
 <style lang="scss">
 
