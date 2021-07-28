@@ -1,17 +1,17 @@
 <template>
 <div class="p-3">
-    <!-- <div v-if="!loaded" class="landing has-background-primary mb-3">
+    <div v-if="!loaded" class="landing has-background-primary mb-3">
        <Instructions />
-    </div> -->
+    </div>
     <section id="filters" class="mb-4 is-hidden-mobile">
       <div class="columns is-vcentered">
-        <div class="column is-3">
+        <div class="column is-4">
           <b-input type="search" class="search column is-full" placeholder="search" v-model="search"></b-input>
         </div>
 
-        <div class="column is-4">
-          <b-field class="is-full">
-            <b-radio v-model="filteredBy"
+        <div class="column is-3">
+          <!-- <b-field class="is-full"> -->
+            <!-- <b-radio v-model="filteredBy"
                 name="name"
                 native-value="season-title">
                 By Season or Concert Title
@@ -30,14 +30,14 @@
                 name="name"
                 native-value="performer">
                 By Performer
-            </b-radio>
-              <!-- <b-select placeholder="FILTERED BY" v-model="filteredBy">
+            </b-radio> -->
+              <b-select placeholder="FILTERED BY" v-model="filteredBy" class="is-full">
                 <option value="season-title">By Season or Concert Title</option>
                 <option value="composition">By Composition</option>
                 <option value="composer">By Composer</option>
                 <option value="performer">By Performer</option>
-              </b-select> -->
-          </b-field>
+              </b-select>
+          <!-- </b-field> -->
         </div>
 
         <div class="column is-5">
