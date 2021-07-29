@@ -276,7 +276,9 @@ export default {
             )
             post.compositions.filter(c => {
               let r = c.composition_video_link.length == 0
-              c.hide = r
+              if (c.hide != true) {
+                c.hide = r
+              }
               return r
             })
             return res
@@ -290,7 +292,9 @@ export default {
             )
             post.compositions.filter(c => {
               let r = c.world_premiere == 0
-              c.hide = r
+              if (c.hide != true) {
+                c.hide = r
+              }
               return r
             })
             return res
@@ -304,7 +308,9 @@ export default {
             )
             post.compositions.filter(c => {
               let r = c.canadian_premiere == false
-              c.hide = r
+              if (c.hide != true) {
+                c.hide = r
+              }
               return r
             })
             return res
@@ -358,7 +364,9 @@ export default {
                   post.compositions.filter(c => {
                     let r = !(c.composition_title.toLowerCase().includes(this.search.toLowerCase())
                         || (c.composition_title.toLowerCase()).includes(this.search.toLowerCase()))
-                    c.hide = r
+                    if (c.hide != true) {
+                      c.hide = r
+                    }
                     return r
                   })
                   return res
@@ -372,7 +380,9 @@ export default {
                    post.compositions.filter(c => {
                      let r = !(this.removeAccents(c.composer_name.toLowerCase()).includes(this.search.toLowerCase())
                           || (c.composer_name.toLowerCase()).includes(this.search.toLowerCase()))
-                     c.hide = r
+                     if (c.hide != true) {
+                      c.hide = r
+                    }
                      return r
                    })
                    return res
@@ -388,7 +398,9 @@ export default {
                      let r = !((this.removeAccents(c.guest_performers.toLowerCase()).includes(this.search.toLowerCase())
                         || (c.guest_performers.toLowerCase()).includes(this.search.toLowerCase()))
                           || c.core_ensemble.some(this.ensemble_checker))
-                     c.hide = r
+                     if (c.hide != true) {
+                      c.hide = r
+                    }
                      return r
                    })
                    return res
