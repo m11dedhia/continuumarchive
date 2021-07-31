@@ -263,6 +263,12 @@ export default {
         let finalposts = [];
         finalposts = Array.from(oriposts);
 
+        finalposts.forEach((post) => {
+          post.compositions.forEach((c) => {
+            c.hide = undefined;
+          }) 
+        })
+
         if (this.hasImages) {
           finalposts = finalposts.filter((post) => {
             return post.images.length != 0
@@ -288,10 +294,10 @@ export default {
         if (this.hasWorldPremiere) {
           finalposts = finalposts.filter(post => {
             let res = post.compositions.some(
-              c => !c.world_premiere == 0
+              c => !c.world_premiere == false
             )
             post.compositions.filter(c => {
-              let r = c.world_premiere == 0
+              let r = c.world_premiere == false
               if (c.hide != true) {
                 c.hide = r
               }
@@ -412,6 +418,15 @@ export default {
                 })
               }
         }
+
+        finalposts = finalposts.filter((post) => {
+          for (let i=0; i<post.compositions.length;i++) {
+            if (!post.compositions[i].hide) {
+              return true;
+            }
+          }
+          return false;
+        })
 
         finalposts.sort((p1,p2) => {
             let modifier = 1;
